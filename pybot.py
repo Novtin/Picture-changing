@@ -5,6 +5,9 @@ from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButt
     InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher.filters.state import StatesGroup, State
+from PIL import Image
+
 
 
 bot = Bot(token="5208126996:AAGgbK5tyQ6UtNAvV6I56Asct6adKbGEPMY", parse_mode=types.ParseMode.HTML)  # Объект бота
@@ -41,6 +44,19 @@ async def send_photo(message: types.Message, state: FSMContext):
     photo = open('test_BaW.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     await state.finish()
+
+
+@dp.message_handler()
+async def send_photo_pix(message: types.Message):  # Пикселизация фото
+    await message.photo[-1].download('test.jpg')
+
+    picture = Image.open('test.jpg')
+    small_picture = picture.resize((128, 128), Image.BILINEAR)
+    result_picture = small_picture.resize(picture.size, Image.NEAREST)
+    result_picture.save('testPIX.jpg')
+    photo = open('testPIX.jpg', 'rb')
+    await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
+
 
 if __name__ == "__main__":
     # Запуск бота

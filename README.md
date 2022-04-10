@@ -4,5 +4,5 @@
 
 Ссылка на макет интерфейса: https://www.figma.com/proto/NQZ4ZOS7DvfX45zzFxmoda/Untitled?node-id=3%3A34&scaling=scale-down&page-id=0%3A1&starting-point-node-id=3%3A34
 
-![photo.png](photo.jpg)
+![photo.png](photo.png)
 ---

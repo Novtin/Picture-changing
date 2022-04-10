@@ -16,9 +16,10 @@ button_start1 = KeyboardButton('Чёрно-белый 🔳')  # кнопка п�
 button_start2 = KeyboardButton('Пиксель - арт')  # кнопка после старта
 button_start3 = KeyboardButton('Негатив')  # кнопка после старта
 button_start4 = KeyboardButton('Оттенки серого')  # кнопка после старта
+button_start5 = KeyboardButton('Мультяшный')  # кнопка после старта
 
 greet_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-greet_kb.add(button_start1, button_start2).add(button_start3, button_start4)
+greet_kb.add(button_start1, button_start2).add(button_start3, button_start4).add(button_start5)
 
 
 @dp.message_handler(commands=['start'])  # Команда старт
@@ -40,6 +41,9 @@ async def next_start(message: types.Message, state: FSMContext):
     elif message.text == 'Оттенки серого':
         await message.answer("Загрузите фотографию", reply_markup=ReplyKeyboardRemove())
         await state.set_state('gray')
+    elif message.text == 'Мультяшный':
+        await message.answer("Загрузите фотографию", reply_markup=ReplyKeyboardRemove())
+        await state.set_state('cartoon')
 
 
 @dp.message_handler(state='wb', content_types=['photo'])  # Функция стиля Ч-Б
@@ -109,6 +113,24 @@ async def send_photo_gray(message: types.Message, state: FSMContext):  # Сер�
     image.save('testGray.jpg')
     del draw
     photo = open('testGray.jpg', 'rb')
+    await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
+    photo.close()
+    await state.finish()
+
+
+@dp.message_handler(state='cartoon', content_types=['photo'])
+async def send_photo_cartoon(message: types.Message, state: FSMContext):  # Стиль мультяшный
+    img = cv2.imread('test.jpg')
+    # Конвертируем фото в серый оттенок
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img2 = cv2.medianBlur(img, 1)
+    # Использование адаптивного порога в качестве маски
+    edges = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 9, 9)
+    color = cv2.bilateralFilter(img, 9, 200, 200)
+    # Наложжение мультяшного стиля
+    cartoon = cv2.bitwise_and(color, color, mask=edges)
+    cv2.imwrite('testCARTOON.jpg', cartoon)
+    photo = open('testCARTOON.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
     await state.finish()

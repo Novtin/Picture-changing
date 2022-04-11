@@ -1,11 +1,11 @@
 import cv2
 import logging
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton, \
-    InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from PIL import Image, ImageDraw
+from os import remove
 
 bot = Bot(token="5208126996:AAGgbK5tyQ6UtNAvV6I56Asct6adKbGEPMY", parse_mode=types.ParseMode.HTML)  # Объект бота
 storage = MemoryStorage()
@@ -22,12 +22,19 @@ greet_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 greet_kb.add(button_start1, button_start2).add(button_start3, button_start4).add(button_start5)
 
 
-@dp.message_handler(commands=['start'])  # Команда старт
-async def start(message: types.Message):
+@dp.message_handler(commands=['start'])  # Команда старт для первого использования
+async def command_start(message: types.Message, state: FSMContext):
+    await message.answer("Начнём!")
+    await start(message, state)
+
+
+@dp.message_handler()  # Команда старт для повторных использований
+async def start(message: types.Message, state: FSMContext):
     await message.answer("Выберите стиль для изменения", reply_markup=greet_kb)
+    await state.set_state('enter')
 
 
-@dp.message_handler()  # Приём текста с клавы
+@dp.message_handler(state='enter')  # Приём текста с клавы
 async def next_start(message: types.Message, state: FSMContext):
     if message.text == 'Чёрно-белый 🔳':
         await message.answer("Загрузите фотографию", reply_markup=ReplyKeyboardRemove())
@@ -56,7 +63,9 @@ async def send_photo(message: types.Message, state: FSMContext):
     photo = open('test_BaW.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    await state.finish()
+    remove('test.jpg')
+    remove('test_BaW.jpg')
+    await start(message, state)
 
 
 @dp.message_handler(state='pix', content_types=['photo'])
@@ -70,7 +79,9 @@ async def send_photo_pix(message: types.Message, state: FSMContext):  # Пикс
     photo = open('testPIX.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    await state.finish()
+    remove('test.jpg')
+    remove('testPIX.jpg')
+    await start(message, state)
 
 
 @dp.message_handler(state='neg', content_types=['photo'])
@@ -92,7 +103,9 @@ async def send_photo_negative(message: types.Message, state: FSMContext):  # Н�
     photo = open('testNegative.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    await state.finish()
+    remove('test.jpg')
+    remove('testNegative.jpg')
+    await start(message, state)
 
 
 @dp.message_handler(state='gray', content_types=['photo'])
@@ -108,18 +121,21 @@ async def send_photo_gray(message: types.Message, state: FSMContext):  # Сер�
             a = pix[i, j][0]
             b = pix[i, j][1]
             c = pix[i, j][2]
-            S = (a + b + c) // 3
-            draw.point((i, j), (S, S, S))
+            s = (a + b + c) // 3
+            draw.point((i, j), (s, s, s))
     image.save('testGray.jpg')
     del draw
     photo = open('testGray.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    await state.finish()
+    remove('test.jpg')
+    remove('testGray.jpg')
+    await start(message, state)
 
 
 @dp.message_handler(state='cartoon', content_types=['photo'])
 async def send_photo_cartoon(message: types.Message, state: FSMContext):  # Стиль мультяшный
+    await message.photo[-1].download('test.jpg')
     img = cv2.imread('test.jpg')
     # Конвертируем фото в серый оттенок
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -133,7 +149,9 @@ async def send_photo_cartoon(message: types.Message, state: FSMContext):  # Ст
     photo = open('testCARTOON.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    await state.finish()
+    remove('test.jpg')
+    remove('testCARTOON.jpg')
+    await start(message, state)
 
 
 if __name__ == "__main__":

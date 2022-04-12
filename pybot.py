@@ -145,7 +145,7 @@ async def send_photo_gray(message: types.Message, state: FSMContext):  # Сер�
 
 
 @dp.message_handler(state='cartoon-max', content_types=['photo'])
-async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # Стиль мультяшный
+async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # Мультяшный стиль с контрастом
     await message.photo[-1].download('test.jpg')
     img = cv2.imread('test.jpg')
     # Применение размытия по Гаусу
@@ -162,19 +162,19 @@ async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # 
     img_lp_al = cv2.Laplacian(img_bf, cv2.CV_8U, ksize=5)
 
     # Применим пороговое значение (Otsu)
-    # Convert the image to greyscale (1D)
+    # Конвертируем фото в серый фильтр
     img_lp_im_grey = cv2.cvtColor(img_lp_im, cv2.COLOR_BGR2GRAY)
     img_lp_gb_grey = cv2.cvtColor(img_lp_gb, cv2.COLOR_BGR2GRAY)
     img_lp_mb_grey = cv2.cvtColor(img_lp_mb, cv2.COLOR_BGR2GRAY)
     img_lp_al_grey = cv2.cvtColor(img_lp_al, cv2.COLOR_BGR2GRAY)
 
-    # Remove some additional noise
+    # Убираем лишние шумы
     blur_im = cv2.GaussianBlur(img_lp_im_grey, (5, 5), 0)
     blur_gb = cv2.GaussianBlur(img_lp_gb_grey, (5, 5), 0)
     blur_mb = cv2.GaussianBlur(img_lp_mb_grey, (5, 5), 0)
     blur_al = cv2.GaussianBlur(img_lp_al_grey, (5, 5), 0)
 
-    # Apply a threshold (Otsu)
+    # Добавляем (Otsu)
     _, tresh_im = cv2.threshold(blur_im, 245, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     _, tresh_gb = cv2.threshold(blur_gb, 245, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     _, tresh_mb = cv2.threshold(blur_mb, 245, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -207,7 +207,7 @@ async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # 
 
 
 @dp.message_handler(state='cartoon-min', content_types=['photo'])
-async def send_photo_cartoon_min(message: types.Message, state: FSMContext):  # Стиль мультяшный
+async def send_photo_cartoon_min(message: types.Message, state: FSMContext):  # Мультяшный стиль без
     await message.photo[-1].download('test.jpg')
     img = cv2.imread('test.jpg')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -228,7 +228,7 @@ async def send_photo_cartoon_min(message: types.Message, state: FSMContext):  # 
 
 
 @dp.message_handler(state='ascii', content_types=['photo'])
-async def send_photo_ascii(message: types.Message, state: FSMContext):  # Стиль мультяшный
+async def send_photo_ascii(message: types.Message, state: FSMContext):  # ASCII стиль
     await message.photo[-1].download('test.jpg')
     img = ArtConverter()
     img.run()

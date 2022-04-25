@@ -7,7 +7,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from PIL import Image, ImageDraw
 from os import remove
 import numpy as np
-from ASCI import ArtConverter
+from ASCII import ArtConverter
 
 bot = Bot(token="5208126996:AAGgbK5tyQ6UtNAvV6I56Asct6adKbGEPMY", parse_mode=types.ParseMode.HTML)  # Объект бота
 storage = MemoryStorage()
@@ -66,39 +66,39 @@ async def next_start(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state='wb', content_types=['photo'])  # Функция стиля Ч-Б
 async def send_photo(message: types.Message, state: FSMContext):
-    await message.photo[-1].download('test.jpg')
-    img_grey = cv2.imread('test.jpg', cv2.IMREAD_GRAYSCALE)
+    await message.photo[-1].download('static/images/test.jpg')
+    img_grey = cv2.imread('static/images/test.jpg', cv2.IMREAD_GRAYSCALE)
     color = 128
     img_binary = cv2.threshold(img_grey, color, 255, cv2.THRESH_BINARY)[1]
     cv2.imwrite('test_BaW.jpg', img_binary)
     photo = open('test_BaW.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('test_BaW.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='pix', content_types=['photo'])
 async def send_photo_pix(message: types.Message, state: FSMContext):  # Пикселизация фото
-    await message.photo[-1].download('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
 
-    picture = Image.open('test.jpg')
+    picture = Image.open('static/images/test.jpg')
     small_picture = picture.resize((128, 128), Image.BILINEAR)
     result_picture = small_picture.resize(picture.size, Image.NEAREST)
     result_picture.save('testPIX.jpg')
     photo = open('testPIX.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('testPIX.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='neg', content_types=['photo'])
 async def send_photo_negative(message: types.Message, state: FSMContext):  # Наложение негатива на фото
-    await message.photo[-1].download('test.jpg')
-    image = Image.open('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
+    image = Image.open('static/images/test.jpg')
     draw = ImageDraw.Draw(image)  # Создаем инструмент для рисования
     width = image.size[0]  # Ширина
     height = image.size[1]  # Высота
@@ -114,15 +114,15 @@ async def send_photo_negative(message: types.Message, state: FSMContext):  # Н�
     photo = open('testNegative.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('testNegative.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='gray', content_types=['photo'])
 async def send_photo_gray(message: types.Message, state: FSMContext):  # Серый фильтр на фото
-    await message.photo[-1].download('test.jpg')
-    image = Image.open('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
+    image = Image.open('static/images/test.jpg')
     draw = ImageDraw.Draw(image)  # Создаем инструмент для рисования
     width = image.size[0]  # Ширина
     height = image.size[1]  # Высота
@@ -139,15 +139,15 @@ async def send_photo_gray(message: types.Message, state: FSMContext):  # Сер�
     photo = open('testGray.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('testGray.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='cartoon-max', content_types=['photo'])
 async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # Мультяшный стиль с контрастом
-    await message.photo[-1].download('test.jpg')
-    img = cv2.imread('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
+    img = cv2.imread('static/images/test.jpg')
     # Применение размытия по Гаусу
     img_gb = cv2.GaussianBlur(img, (7, 7), 0)
     # Применение блюра
@@ -201,15 +201,15 @@ async def send_photo_cartoon_max(message: types.Message, state: FSMContext):  # 
     photo = open('testCARTOONMAX.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('testCARTOONMAX.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='cartoon-min', content_types=['photo'])
 async def send_photo_cartoon_min(message: types.Message, state: FSMContext):  # Мультяшный стиль без
-    await message.photo[-1].download('test.jpg')
-    img = cv2.imread('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
+    img = cv2.imread('static/images/test.jpg')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.medianBlur(img, 5)
     img = cv2.GaussianBlur(img, (7, 7), 0)
@@ -222,22 +222,21 @@ async def send_photo_cartoon_min(message: types.Message, state: FSMContext):  # 
     photo = open('testCARTOONMIN.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
-    remove('test.jpg')
+    remove('static/images/test.jpg')
     remove('testCARTOONMIN.jpg')
     await start(message, state)
 
 
 @dp.message_handler(state='ascii', content_types=['photo'])
 async def send_photo_ascii(message: types.Message, state: FSMContext):  # ASCII стиль
-    await message.photo[-1].download('test.jpg')
+    await message.photo[-1].download('static/images/test.jpg')
     img = ArtConverter()
     img.run()
-    photo = open('testASCI.jpg', 'rb')
+    photo = open('static/images/test.jpg', 'rb')
     await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
     photo.close()
     del img
-    remove('test.jpg')
-    remove('testASCI.jpg')
+    remove('static/images/test.jpg')
     await start(message, state)
 
 

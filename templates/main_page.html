@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение фотографий</title>
+</head>
+<body>
+<h1>Выберите стиль</h1>
+<ul>
+    {% for style in menu %}
+    <li><h2><a href="{{style.url}}">{{style.name}}</a></h2></li>
+    {% endfor %}
+</ul>
+</body>
+</html>

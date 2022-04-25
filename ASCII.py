@@ -4,7 +4,7 @@ import pygame as pg
 
 
 class ArtConverter:
-    def __init__(self, path='test.jpg', font_size=12):
+    def __init__(self, path='static/images/test.jpg', font_size=12):
         self.cv2_image = None
         pg.init()
         self.path = path
@@ -34,7 +34,7 @@ class ArtConverter:
     def save_image(self):
         pygame_image = pg.surfarray.array3d(self.surface)
         cv2_img = cv2.transpose(pygame_image)
-        cv2.imwrite('testASCI.jpg', cv2_img)
+        cv2.imwrite('static/images/test.jpg', cv2_img)
 
     def run(self):
         self.draw()

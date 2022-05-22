@@ -13,7 +13,8 @@ menu = [{"name": "Чёрно-белый", "url": "wb"},
         {"name": "Оттенки серого", "url": "grey"},
         {"name": "Мультяшный-max", "url": "cartoon-max"},
         {"name": "Мультяшный-min", "url": "cartoon-min"},
-        {"name": "ASCII", "url": "ascii"}]
+        {"name": "ASCII", "url": "ascii"},
+        {"name": "Контур", "url": "cont"}]
 
 
 @app.route("/")
@@ -43,6 +44,22 @@ def pixel():
         result_picture = small_picture.resize(picture.size, Image.NEAREST)
         result_picture.save('static/images/test.jpg')
     return render_template('style.html', name=url_for("pixel"))
+
+
+@app.route("/cont", methods=['POST', 'GET'])
+def contour():
+    if request.method == 'POST':
+        picture: FileStorage = request.files.to_dict()['picture']
+        picture.save('static/images/test.jpg')
+        image = cv2.imread("static/images/test.jpg")
+        grey_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        invert = cv2.bitwise_not(grey_img)
+        blur = cv2.GaussianBlur(invert, (21, 21), 0)
+        invertblur = cv2.bitwise_not(blur)
+        sketch = cv2.divide(grey_img, invertblur, scale=256.0)
+
+        cv2.imwrite('static/images/test.jpg', sketch)
+    return render_template('style.html', name=url_for("contour"))
 
 
 @app.route("/neg", methods=['POST', 'GET'])

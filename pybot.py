@@ -21,10 +21,11 @@ button_start4 = KeyboardButton('Оттенки серого')  # кнопка п
 button_start5 = KeyboardButton('Мультяшный-max')  # кнопка после старта
 button_start6 = KeyboardButton('Мультяшный-min')  # кнопка после старта
 button_start7 = KeyboardButton('ASCII')  # кнопка после старта
+button_start8 = KeyboardButton('Контур') # кнопка после старта
 
 greet_kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 greet_kb.add(button_start1, button_start2, button_start3).add(button_start4, button_start5, button_start6) \
-    .add(button_start7)
+    .add(button_start7, button_start8)
 
 
 @dp.message_handler(commands=['start'])  # Команда старт для первого использования
@@ -62,6 +63,9 @@ async def next_start(message: types.Message, state: FSMContext):
     elif message.text == 'ASCII':
         await message.answer("Загрузите фотографию", reply_markup=ReplyKeyboardRemove())
         await state.set_state('ascii')
+    elif message.text == 'Контур':
+        await message.answer("Загрузите фотографию", reply_markup=ReplyKeyboardRemove())
+        await state.set_state('cont')
 
 
 @dp.message_handler(state='wb', content_types=['photo'])  # Функция стиля Ч-Б
@@ -82,7 +86,6 @@ async def send_photo(message: types.Message, state: FSMContext):
 @dp.message_handler(state='pix', content_types=['photo'])
 async def send_photo_pix(message: types.Message, state: FSMContext):  # Пикселизация фото
     await message.photo[-1].download('static/images/test.jpg')
-
     picture = Image.open('static/images/test.jpg')
     small_picture = picture.resize((128, 128), Image.BILINEAR)
     result_picture = small_picture.resize(picture.size, Image.NEAREST)
@@ -92,6 +95,25 @@ async def send_photo_pix(message: types.Message, state: FSMContext):  # Пикс
     photo.close()
     remove('static/images/test.jpg')
     remove('testPIX.jpg')
+    await start(message, state)
+
+
+@dp.message_handler(state='cont', content_types=['photo']) # Функция для выделения контура фотографий
+async def send_photo_contour(message: types.Message, state: FSMContext):
+    await message.photo[-1].download('static/images/test.jpg')
+    image = cv2.imread("static/images/test.jpg")
+    grey_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    invert = cv2.bitwise_not(grey_img)
+    blur = cv2.GaussianBlur(invert, (21, 21), 0)
+    invertblur = cv2.bitwise_not(blur)
+    sketch = cv2.divide(grey_img, invertblur, scale=256.0)
+
+    cv2.imwrite("test_contour.jpg", sketch)
+    photo = open('test_contour.jpg', 'rb')
+    await bot.send_photo(message.from_user.id, photo=photo, caption="Результат")
+    photo.close()
+    remove('static/images/test.jpg')
+    remove('test_contour.jpg')
     await start(message, state)
 
 
@@ -240,6 +262,5 @@ async def send_photo_ascii(message: types.Message, state: FSMContext):  # ASCII 
     await start(message, state)
 
 
-if __name__ == "__main__":
-    # Запуск бота
+if __name__ == "__main__":  # Запуск бота
     executor.start_polling(dp, skip_updates=True)

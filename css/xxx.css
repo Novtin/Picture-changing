@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: rgba(32, 119, 96, 0.942);
+    font-family: 'Segoe UI';
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 7vmin;
+    overflow: hidden;
+    transform: skew(5deg);
+  }
+  .container .card {
+    flex: 1;
+    transition: all 1s ease-in-out;
+    height: 75vmin;
+    position: relative;
+  }
+  .container .card .card__head {
+    color: rgb(217, 214, 42);
+    background: rgba(41, 137, 19, 0.75);
+    padding: 0.5em;
+    transform: rotate(-90deg);
+    transform-origin: 0% 0%;
+    transition: all 0.5s ease-in-out;
+    min-width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 2em;
+    white-space: nowrap;
+  }
+  .container .card:hover {
+    flex-grow: 10;
+  }
+  .container .card:hover img {
+    filter: grayscale(0);
+  }
+  .container .card:hover .card__head {
+    text-align: center;
+    top: calc(100% - 2em);
+    color: rgb(230, 205, 246);
+    background: rgba(11, 121, 57, 0.518);
+    font-size: 2em;
+    transform: rotate(0deg) skew(-5deg);
+  }
+  .container .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 1s ease-in-out;
+    filter: grayscale(100%);
+  }
+  .container .card:not(:nth-child(5)) {
+    margin-right: 1em;
+  }
+.pic__on__slide{
+  margin: 7vmin;
+  color: white;
+}
+.text{
+  color: rgb(135, 216, 48);
+}
+.zxc{
+  color: rgb(200, 181, 181);
+}
+a {
+    text-decoration: none;
+}
+ul {
+    list-style: none;
+}

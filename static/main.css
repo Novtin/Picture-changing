@@ -199,3 +199,10 @@ nav a:focus {
   padding: 10em 3em;
   text-align: center;
 }
+
+
+.main #bottom{
+  position: absolute;                  
+  bottom:0;                          
+  left:0;  
+}

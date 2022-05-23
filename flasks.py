@@ -18,7 +18,7 @@ menu = [{"name": "Чёрно-белый", "url": "wb"},
 
 @app.route("/")
 def main_page():
-    return render_template('main_page.html', menu=menu)
+    return render_template('main.html', menu=menu)
 
 
 @app.route("/wb", methods=['POST', 'GET'])

@@ -3,6 +3,7 @@ from werkzeug.datastructures import FileStorage
 import cv2
 from PIL import Image, ImageDraw
 import numpy as np
+from os import remove
 from ASCII import ArtConverter
 
 
@@ -19,6 +20,8 @@ menu = [{"name": "Чёрно-белый", "url": "wb"},
 
 @app.route("/")
 def main_page():
+    photo = Image.open('static/images/example.jpg')
+    photo.save('static/images/test.jpg')
     return render_template('main.html', menu=menu)
 
 

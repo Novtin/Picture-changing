@@ -14,7 +14,7 @@
             <form action="{{ name }}" method="post" enctype="multipart/form-data">
                 <p><label >Загрузите фотографию: </label> <input class="form-control" type="file" id="formFile" name="picture" accept=".jpg"></p>
                 <p><input type="submit" id="send" value="Отправить"/></p>
-                <p><img src= "{{ url_for('static', filename='images/test.jpg') }}"></p>
+                <p><img src= "{{ url_for('static', filename='images/test.jpg') }}" width="640" height="480"></p>
             </form>
             <form action="/" method="get">
                 <input type="submit" id="bottom" value="Вернуться назад" />

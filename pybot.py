@@ -9,7 +9,7 @@ from os import remove
 import numpy as np
 from ASCII import ArtConverter
 
-bot = Bot(token="5208126996:AAGgbK5tyQ6UtNAvV6I56Asct6adKbGEPMY", parse_mode=types.ParseMode.HTML)  # Объект бота
+bot = Bot(token="Token", parse_mode=types.ParseMode.HTML)  # Объект бота
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)  # Диспетчер для бота
 logging.basicConfig(level=logging.INFO)  # Включаем логирование, чтобы не пропустить важные сообщения
